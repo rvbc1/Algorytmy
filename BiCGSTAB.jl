@@ -1,31 +1,22 @@
 using LinearAlgebra
 
-function bicgstab()
-    #A = 4;
-    A = [1 2; 3 4]
-    x = [1; 1]
-    #x = 6;
-    #b = 3;
-    b = [-39; 30]
-    max_itration = 10;
-
-    normal_to_b = norm( b );
-
+function bicgstab(A, x, b, tolerance, max_itration = 1000)
+    norm_b = norm( b );
     r = b - A*x 
     r0 = p = r 
     
 
-    for iter = 1:max_itration
+    for iteration_counter = 1:max_itration
         alpha = (r'*r0)/((A*p)'*r0)
         s = r - alpha*A*p
         omega = ((A*s)'*s) / ((A*s)'*(A*s))
         x = x + alpha*p + omega*s
         r_next = s - omega*(A*s)
 
-        error = norm(r) / normal_to_b; 
-        if(error < 0.1)
+        error = norm(r) / norm_b; 
+        if(error <= tolerance)
             print("in tolerance afer ")
-            print(iter)
+            print(iteration_counter)
             println(" iterations")
             break
         end
@@ -42,10 +33,12 @@ function bicgstab()
     return x
 end
 
-x0 = bicgstab()
+
 
 A = [1 2; 3 4]
-
+x = [1; 1]
+b = [-5646; 54355]
+x0 = bicgstab(A, x, b, 0.1)
 
 println(x0)
 println(A*x0)
