@@ -4,14 +4,16 @@ function bicgstab(A, x, b, tolerance, max_itration = 1000)
     norm_b = norm( b );
     r = b - A*x 
     r0 = p = r 
+    rho = r'*r0
     
-
     for iteration_counter = 1:max_itration
-        alpha = (r'*r0)/((A*p)'*r0)
-        s = r - alpha*A*p
-        omega = ((A*s)'*s) / ((A*s)'*(A*s))
+        v = A*p
+        alpha = rho/(v'*r0)
+        s = r - alpha*v
+        t = A*s
+        omega = (t'*s) / (t'*t)
         x = x + alpha*p + omega*s
-        r_next = s - omega*(A*s)
+        r_next = s - omega*t
 
         error = norm(r) / norm_b; 
         if(error <= tolerance)
@@ -26,9 +28,11 @@ function bicgstab(A, x, b, tolerance, max_itration = 1000)
             break
         end
 
-        beta = ((r_next'*r0) / (r'*r0)) * (alpha/omega)
-        p = r_next + beta*(p - omega*(A*p))
+        rho_next = (r_next'*r0)
+        beta = (rho_next / rho) * (alpha/omega)
+        p = r_next + beta*(p - omega*v)
         r = r_next
+        rho = rho_next
     end
     return x
 end
