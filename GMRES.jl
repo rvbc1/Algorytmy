@@ -1,7 +1,6 @@
 using LinearAlgebra
 
 function gmres(A, x, b, tolerance, max_iterations)
-    n = length(A)
     m,n = size(A,1), size(A,2)
     r = b - A*x
 
@@ -19,11 +18,18 @@ function gmres(A, x, b, tolerance, max_iterations)
     beta = r_norm * e1
 
     k = 1
-    H = zeros(2, 1)
+    H = zeros(1, 0)
 
-    for k = 1:m
+    for k = 1:max_iterations
         tmp = arnoldi(A, Q, k)
-        H = zeros(k + 1, k)
+
+        #reshape matrix H
+        H_add = zeros(k, 1)
+        H = hcat(H,H_add)
+        H_add = zeros(1, k)
+        H = vcat(H,H_add)
+
+        #H = zeros(k + 1, k)
         H[1:k+1, k] = tmp.h
         Q[:, k+1] = tmp.q
 
@@ -39,9 +45,13 @@ function gmres(A, x, b, tolerance, max_iterations)
         e = [e; error]
 
         if (error <= tolerance)
+            print("in tolerance afer ")
+            print(k)
+            println(" iterations")
             break
         end
     end
+    k = k + 1
     y = H[1:k, 1:k] \ beta[1:k]
     x = x + Q[:, 1:k] * y
 
@@ -91,7 +101,7 @@ end
 A = [1 2; 3 4]
 x = [1; 1]
 b = [-5646; 54355]
-x0 = gmres(A, x, b, 0.5, 1000)
+x0 = gmres(A, x, b, 0.1, 1000)
 
 println(x0)
 println(A*x0)
