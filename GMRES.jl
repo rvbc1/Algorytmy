@@ -21,22 +21,14 @@ function gmres(A, x, b, tolerance, max_iterations)
     H = zeros(1, 0)
 
     for k = 1:max_iterations
-        tmp = arnoldi(A, Q, k)
-
         #reshape matrix H
         H_add = zeros(k, 1)
         H = hcat(H,H_add)
         H_add = zeros(1, k)
         H = vcat(H,H_add)
 
-        #H = zeros(k + 1, k)
-        H[1:k+1, k] = tmp.h
-        Q[:, k+1] = tmp.q
-
-        tmp2 = apply_givens_rotation(H[1:k+1,k], cs, sn, k)
-        H[1:k+1, k] = tmp2.h
-        cs[k] = tmp2.cs_k
-        sn[k] = tmp2.sn_k
+        (H[1:k+1, k], Q[:, k+1]) = arnoldi(A, Q, k)
+        (H[1:k+1, k], cs[k], sn[k]) = apply_givens_rotation(H[1:k+1,k], cs, sn, k)
 
         beta[k + 1] = -sn[k] * beta[k]
         beta[k] = cs[k] * beta[k]
@@ -67,7 +59,7 @@ function arnoldi(A, Q, k)
     end
     h[k + 1] = norm(q)
     q = q / h[k + 1]
-    return x = (h=h, q=q)
+    return (h, q)
 end
 
 function apply_givens_rotation(h, cs, sn, k)
@@ -77,13 +69,11 @@ function apply_givens_rotation(h, cs, sn, k)
         h[i]   = temp
     end
   
-    tmp = givens_rotation(h[k], h[k + 1])
-    cs_k = tmp.cs;
-    sn_k = tmp.sn
+    (cs_k, sn_k) = givens_rotation(h[k], h[k + 1])
   
     h[k] = cs_k * h[k] + sn_k * h[k + 1]
     h[k + 1] = 0.0
-    return x = (h=h, cs_k=cs_k, sn_k=sn_k)
+    return (h, cs_k, sn_k)
 end
 
 function givens_rotation(v1, v2)
@@ -95,7 +85,7 @@ function givens_rotation(v1, v2)
         cs = abs(v1) / t
         sn = cs * v2 / v1
     end
-    return x = (cs=cs, sn=sn)
+    return (cs, sn)
 end
 
 A = [1 2; 3 4]
