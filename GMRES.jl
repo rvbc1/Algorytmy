@@ -17,8 +17,8 @@ function gmres(A, x, b, tolerance, max_iterations)
     Q[:,1] = r / r_norm
     beta = r_norm * e1
 
-    k = 1
     H = zeros(1, 0)
+    k_end = 1
 
     for k = 1:max_iterations
         #reshape matrix H
@@ -40,12 +40,12 @@ function gmres(A, x, b, tolerance, max_iterations)
             print("in tolerance afer ")
             print(k)
             println(" iterations")
+            k_end = k
             break
         end
     end
-    k = k + 1
-    y = H[1:k, 1:k] \ beta[1:k]
-    x = x + Q[:, 1:k] * y
+    y = H[1:k_end, 1:k_end] \ beta[1:k_end]
+    x = x + Q[:, 1:k_end] * y
 
     return x
 end
@@ -88,9 +88,9 @@ function givens_rotation(v1, v2)
     return (cs, sn)
 end
 
-A = [1 2; 3 4]
-x = [1; 1]
-b = [-5646; 54355]
+A = [1 1 -3 1; -5 3 -4 1; 1 0 2 -1; 1 2 0 0]
+x = [1; 1; 1; 1]
+b = [2; 0; 1; 12]
 x0 = gmres(A, x, b, 0.1, 1000)
 
 println(x0)
