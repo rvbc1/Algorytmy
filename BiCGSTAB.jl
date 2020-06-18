@@ -1,11 +1,11 @@
 using LinearAlgebra
 
 function bicgstab(A, x, b, tolerance, max_itration = 1000)
-    norm_b = norm( b );
+    norm_b = norm(b);
     r = b - A*x 
     r0 = p = r 
     rho = r'*r0
-    
+    iterations = max_itration;
     for iteration_counter = 1:max_itration
         v = A*p
         alpha = rho/(v'*r0)
@@ -17,9 +17,10 @@ function bicgstab(A, x, b, tolerance, max_itration = 1000)
 
         error = norm(r) / norm_b; 
         if(error <= tolerance)
-            print("in tolerance afer ")
-            print(iteration_counter)
-            println(" iterations")
+            #print("in tolerance afer ")
+            #print(iteration_counter)
+            #println(" iterations")
+            iterations = iteration_counter
             break
         end
 
@@ -34,15 +35,8 @@ function bicgstab(A, x, b, tolerance, max_itration = 1000)
         r = r_next
         rho = rho_next
     end
-    return x
+    return x, iterations
 end
 
 
 
-A = [1 2; 3 4]
-x = [1; 1]
-b = [-5646; 54355]
-x0 = bicgstab(A, x, b, 0.1)
-
-println(x0)
-println(A*x0)
