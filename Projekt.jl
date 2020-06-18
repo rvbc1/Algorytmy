@@ -50,7 +50,7 @@ end
 
 #x = [1; 1]
 
-array_size = 1000
+array_size = 100
 
 A = rand(array_size,array_size)
 x = zeros(array_size,1)
@@ -64,10 +64,10 @@ b = rand(array_size,1)
 
 
 
-perf_gres = performance_gmres(A, x, b, 0.1, 1000)
-print_performance(perf_gres)
+#perf_gres = performance_gmres(A, x, b, 0.1, 1000)
+#print_performance(perf_gres)
 
-println()
+#println()
 
-perf_bicgstab = performance_bicgstab(A, x, b, 0.1, 1000)
+perf_bicgstab = performance_bicgstab(A, x, b, 0.1, 100000)
 print_performance(perf_bicgstab)
