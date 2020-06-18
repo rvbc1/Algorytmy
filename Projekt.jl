@@ -53,7 +53,7 @@ end
 array_size = 1000
 
 A = rand(array_size,array_size)
-x = rand(array_size,1)
+x = zeros(array_size,1)
 b = rand(array_size,1)
 #println(b)
 
