@@ -48,26 +48,30 @@ function print_performance(performance)
 end
 
 
-#x = [1; 1]
+array_size = 1000
+for i = 1:10
 
-array_size = 100
+    println()
+    print(i)
+    println(":")
+    A = rand(array_size,array_size)
+    print("Cond A: ")
+    println(cond(A))
+    x = zeros(array_size,1)
+    b = rand(array_size,1)
 
-A = rand(array_size,array_size)
-x = zeros(array_size,1)
-b = rand(array_size,1)
-#println(b)
+    tolerance = 0.1
 
-#A = [45 23 23; 12 86 2; 14 53 45]
-#x = [1; 1; 1]
-#b = [-5646; 54355; 43]
-#b = [0.14745; 0.406418; 0.624058]
+    max_itration = 10000
 
 
 
-#perf_gres = performance_gmres(A, x, b, 0.1, 1000)
-#print_performance(perf_gres)
 
-#println()
+    perf_gres = performance_gmres(A, x, b, tolerance, max_itration)
+    print_performance(perf_gres)
 
-perf_bicgstab = performance_bicgstab(A, x, b, 0.1, 100000)
-print_performance(perf_bicgstab)
+    println()
+
+    perf_bicgstab = performance_bicgstab(A, x, b, tolerance, max_itration)
+    print_performance(perf_bicgstab)
+end
