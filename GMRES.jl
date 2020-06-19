@@ -1,4 +1,4 @@
-using ArnoldiMethod
+using LinearAlgebra
 
 function gmres(A, x, b, tolerance, max_iterations)
     m,n = size(A,1), size(A,2)

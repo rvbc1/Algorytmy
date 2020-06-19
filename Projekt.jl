@@ -2,6 +2,7 @@ include("BiCGSTAB.jl")
 include("GMRES.jl")
 
 using Printf
+using SparseArrays
 
 function performance_bicgstab(A, x0, b, tolerance, max_iterations)
     timed = @timed x = bicgstab(A, x0, b, tolerance, max_iterations)
@@ -47,16 +48,40 @@ function print_performance(performance)
     println(performance[3])
 end
 
+function droplower(A::SparseMatrixCSC)
+    m,n = size(A)
+    rows = rowvals(A)
+    vals = nonzeros(A)
+    V = Vector{eltype(A)}()
+    I = Vector{Int}()
+    J = Vector{Int}()
+    for i=1:n
+        for j in nzrange(A,i)
+            rows[j]>i && break
+            push!(I,rows[j])
+            push!(J,i)
+            push!(V,vals[j])
+        end
+    end
+    return sparse(I,J,V,m,n)
+end
 
-array_size = 1000
+array_size = 10
 for i = 1:10
 
     println()
     print(i)
     println(":")
-    A = rand(array_size,array_size)
+    #A = rand(array_size,array_size)
+    A = sprand(array_size,array_size,0.2)
+
+    A = droplower(A)
+
+    A = Symmetric(A)
+ 
+
     print("Cond A: ")
-    println(cond(A))
+    println(cond(Array(A), 2))
     x = zeros(array_size,1)
     b = rand(array_size,1)
 
